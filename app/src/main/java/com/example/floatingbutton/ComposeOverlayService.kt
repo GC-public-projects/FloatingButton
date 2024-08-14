@@ -24,11 +24,12 @@ class ComposeOverlayService :
     LifecycleOwner,
     SavedStateRegistryOwner {
     private val _lifecycleRegistry = LifecycleRegistry(this)
+    override val lifecycle: Lifecycle = _lifecycleRegistry
     private val _savedStateRegistryController: SavedStateRegistryController =
         SavedStateRegistryController.create(this)
     override val savedStateRegistry: SavedStateRegistry =
         _savedStateRegistryController.savedStateRegistry
-    override val lifecycle: Lifecycle = _lifecycleRegistry
+
 
     lateinit var windowManager: WindowManager
     private var overlayView: View? = null
@@ -131,5 +132,4 @@ class ComposeOverlayService :
             startService(context, INTENT_EXTRA_COMMAND_HIDE_OVERLAY)
         }
     }
-
 }

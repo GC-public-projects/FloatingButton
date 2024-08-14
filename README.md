@@ -50,6 +50,155 @@ dependencies {
 
 # Code
 
+## ComposeOverlayService (class)
+
+### Purpose
+
+### Components explanations
+
+#### Inheritance and implementations
+The class inherits of Service and implements 2 interfaces
+- Service() : all services should inherit from Service class
+- LifecycleOwner : interface that will help us to implement the necessary attributes (only one) in order to handle the lifecycle for the ComposeView in our service
+- SavedStateRegistryOwner : interface that will help us to implement the necessary attributes (only one) in order to handle the state management for the ComposeView in ur service
+
+#### Attributes
+ - private val \_lifecycleRegistry : private attribute used to initialise the public attribute 
+"lifecycle" 
+- lifecycle : attribute implemented by the interface "LifecycleOwner". We will setup the private attribitute on each event of our service and before the creation of the ComoseView to ensure that UI components react appropriately to lifecycle events.
+ - private val \_savedStateRegistryController : private attribute used to initialise the public attribute "savedStateRegistry" 
+ - savedStateRegistry : attribute implemented by the interface "SavedStateRegistryOwner". We will setup setup the private attribute in the onCreate event to ensure that any stateful composable within MyFloatingComposable can save and restore its state.
+ - lateinit var windowManager : critical component that will allow us to add, update or remove views (UI elements) independent of any specific activity.
+
+
+
+
+
+
+
+### Content
+- create Kotlin class/file in Main package named "ComposeOverlayService"
+``` kotlin
+class ComposeOverlayService :
+    Service(),
+    LifecycleOwner,
+    SavedStateRegistryOwner {
+    private val _lifecycleRegistry = LifecycleRegistry(this)
+    private val _savedStateRegistryController: SavedStateRegistryController =
+        SavedStateRegistryController.create(this)
+    override val savedStateRegistry: SavedStateRegistry =
+        _savedStateRegistryController.savedStateRegistry
+    override val lifecycle: Lifecycle = _lifecycleRegistry
+
+    lateinit var windowManager: WindowManager
+    private var overlayView: View? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        _savedStateRegistryController.performAttach()
+        _savedStateRegistryController.performRestore(null)
+        _lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        throw RuntimeException("bound mode not supported")
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if (intent.hasExtra(INTENT_EXTRA_COMMAND_SHOW_OVERLAY)) {
+            showOverlay()
+        }
+        if (intent.hasExtra(INTENT_EXTRA_COMMAND_HIDE_OVERLAY)) {
+            hideOverlay()
+        }
+        return START_NOT_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        hideOverlay()
+        _lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    }
+
+    private fun showOverlay() {
+        if (overlayView != null) return
+
+        _lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        _lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+
+        val params = getLayoutParams()
+
+        overlayView = ComposeView(this).apply {
+            setViewTreeLifecycleOwner(this@ComposeOverlayService)
+            setViewTreeSavedStateRegistryOwner(this@ComposeOverlayService)
+            setContent {
+                MyFloatingComposable(::hideOverlay)
+            }
+        }
+
+        windowManager.addView(overlayView, params)
+    }
+
+    private fun hideOverlay() {
+        Log.i("MYLOG", "hideOverlay()")
+        if (overlayView == null) {
+            Log.i("MYLOG", "overlay not shown - aborting")
+            return
+        }
+        windowManager.removeView(overlayView)
+        overlayView = null
+
+        _lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        _lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+    }
+
+    private fun getLayoutParams(): WindowManager.LayoutParams {
+        return WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+//            400 * resources.displayMetrics.density.toInt(),
+//            400 * resources.displayMetrics.density.toInt(),
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.CENTER
+        }
+
+    }
+
+    companion object {
+        private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY =
+            "INTENT_EXTRA_COMMAND_SHOW_OVERLAY"
+        private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY =
+            "INTENT_EXTRA_COMMAND_HIDE_OVERLAY"
+
+        private fun startService(context: Context, command: String) {
+            val intent = Intent(context, ComposeOverlayService::class.java)
+            intent.putExtra(command, true)
+            context.startService(intent)
+        }
+
+        internal fun showOverlay(context: Context) {
+            startService(context, INTENT_EXTRA_COMMAND_SHOW_OVERLAY)
+        }
+
+        internal fun hideOverlay(context: Context) {
+            startService(context, INTENT_EXTRA_COMMAND_HIDE_OVERLAY)
+        }
+    }
+
+}
+
+```
+
+
+
+
 ## MainActivity (class)
 
 ### Purpose
