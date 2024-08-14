@@ -31,7 +31,7 @@ class ComposeOverlayService :
         _savedStateRegistryController.savedStateRegistry
 
 
-    lateinit var windowManager: WindowManager
+    private lateinit var windowManager: WindowManager
     private var overlayView: View? = null
 
     override fun onCreate() {

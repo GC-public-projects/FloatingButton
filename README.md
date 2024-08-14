@@ -53,6 +53,7 @@ dependencies {
 ## ComposeOverlayService (class)
 
 ### Purpose
+Service that will crate the ComposeView as an overlay on the top of the screen.
 
 ### Components explanations
 
@@ -68,7 +69,17 @@ The class inherits of Service and implements 2 interfaces
 - lifecycle : attribute implemented by the interface "LifecycleOwner". We will setup the private attribitute on each event of our service and before the creation of the ComoseView to ensure that UI components react appropriately to lifecycle events.
  - private val \_savedStateRegistryController : private attribute used to initialise the public attribute "savedStateRegistry" 
  - savedStateRegistry : attribute implemented by the interface "SavedStateRegistryOwner". We will setup setup the private attribute in the onCreate event to ensure that any stateful composable within MyFloatingComposable can save and restore its state.
- - lateinit var windowManager : critical component that will allow us to add, update or remove views (UI elements) independent of any specific activity.
+ - private lateinit var windowManager : critical component that will allow us to add, update or remove views (UI elements) independent of any specific activity.
+ - private var overlayView : View that will be affected the ComposeView created later in the service 
+
+#### methods :
+- override fun onCreate() : Method that handle the initial setup when the service is created. windowManeger is affected the WINDOW_SERVICE in order to use it later to display the windows/overlays. \_savedStateRegistryController is attached to the service and restored in order to retrieve the former states of the ComposeView in case the service was killed and restarted.
+
+- override fun onBind(intent: Intent?) : Method not used in this case as the service must run regardless any activiy
+
+- override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int : Method called each time startService() is called (from an activity or another component). In function of the extras of the intent used to start the service, the method "showOverlay()" or hideOverlay() will be called. This method return an integer code that will indicate the behavior of the service when it is killed. in this case, START_NOT_STICKY indicates that the service should not be restarted automatically.
+
+
 
 
 
