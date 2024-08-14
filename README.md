@@ -4,7 +4,7 @@ little JetPack compose app with the minimum features required to show and hide a
 ### Project status : Workable, documentation in progress...
 
 ## target audience
-This project if for Jetpack Compose initiated user
+This project is for Jetpack Compose initiated user
 
 ## Presentation
 The goal of this demo is to explain the way to show and hide a composable (button) over all the apps. In order to keep the app the more simple possible, the button wont be draggable. Another app will be created later in order to show some advanced features like the way to drag the composView on the screen.
@@ -35,7 +35,7 @@ In AndroidManifest.xml
 	<service android:name=".ComposeOverlayService"
             android:exported="false"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW">
-    </service>
+</service>
 </application>
 
 ```
@@ -53,7 +53,7 @@ dependencies {
 ## ComposeOverlayService (class)
 
 ### Purpose
-Service that will crate the ComposeView as an overlay on the top of the screen.
+Service that will create the ComposeView as an overlay on the top of the screen.
 
 ### Components explanations
 
@@ -61,21 +61,21 @@ Service that will crate the ComposeView as an overlay on the top of the screen.
 The class inherits of Service and implements 2 interfaces
 - Service() : all services should inherit from Service class
 - LifecycleOwner : interface that will help us to implement the necessary attributes (only one) in order to handle the lifecycle for the ComposeView in our service
-- SavedStateRegistryOwner : interface that will help us to implement the necessary attributes (only one) in order to handle the state management for the ComposeView in ur service
+- SavedStateRegistryOwner : interface that will help us to implement the necessary attributes (only one) in order to handle the state management for the ComposeView in our service
 
 #### Attributes
  - private val \_lifecycleRegistry : private attribute used to initialise the public attribute 
 "lifecycle" 
-- lifecycle : attribute implemented by the interface "LifecycleOwner". We will setup the private attribitute on each event of our service and before the creation of the ComoseView to ensure that UI components react appropriately to lifecycle events.
+- lifecycle : attribute implemented by the interface "LifecycleOwner". We will setup the private attribute on each event of our service and before the creation of the ComposeView to ensure that UI components react appropriately to lifecycle events.
  - private val \_savedStateRegistryController : private attribute used to initialise the public attribute "savedStateRegistry" 
- - savedStateRegistry : attribute implemented by the interface "SavedStateRegistryOwner". We will setup setup the private attribute in the onCreate event to ensure that any stateful composable within MyFloatingComposable can save and restore its state.
+ - savedStateRegistry : attribute implemented by the interface "SavedStateRegistryOwner". We will setup setup the private attribute in the "onCreate" event to ensure that any stateful composable within MyFloatingComposable can save and restore its state.
  - private lateinit var windowManager : critical component that will allow us to add, update or remove views (UI elements) independent of any specific activity.
  - private var overlayView : View that will be affected the ComposeView created later in the service 
 
 #### methods :
 - override fun onCreate() : Method that handle the initial setup when the service is created. windowManeger is affected the WINDOW_SERVICE in order to use it later to display the windows/overlays. \_savedStateRegistryController is attached to the service and restored in order to retrieve the former states of the ComposeView in case the service was killed and restarted.
 
-- override fun onBind(intent: Intent?) : Method not used in this case as the service must run regardless any activiy
+- override fun onBind(intent: Intent?) : Method not used in this case as the service must run regardless any activity
 
 - override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int : Method called each time startService() is called (from an activity or another component). In function of the extras of the intent used to start the service, the method "showOverlay()" or hideOverlay() will be called. This method return an integer code that will indicate the behavior of the service when it is killed. in this case, START_NOT_STICKY indicates that the service should not be restarted automatically.
 
@@ -213,7 +213,7 @@ class ComposeOverlayService :
 ## MainActivity (class)
 
 ### Purpose
-- call the alert dialog to sh
+- call the alert dialog to 
 
 
 
