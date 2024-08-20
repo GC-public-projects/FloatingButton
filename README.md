@@ -102,7 +102,28 @@ It is called at 3 different places :
 - called when onDestroy() is called.
 
 ##### private fun getLayoutParams(): WindowManager.LayoutParams
-Method taht return a WindowManager.LayoutParams object affected to params. It sets the properties that control the appearance, positioning, and behavior of the overlay. The params of WindowManager.LayoutParams(...) cannot be name as it is a Java and non kotlin method.
+Method that returns a "WindowManager.LayoutParams" object affected to params. It sets the properties that control the appearance, positioning, and behavior of the overlay. The params of WindowManager.LayoutParams(...) between the braces cannot be named as it is a Java and non kotlin nested class. The class "LayoutParams" has an overloaded constructor, so many versions of it exist. We will use the version with these params here :
+
+###### width = WindowManager.LayoutParams.WRAP_CONTENT
+These constant specify that the width of the overlay should be just large enough to fit the content inside it. The overlay will not occupy more space than necessary.
+
+Other possible ways to setup the width :
+- raw value in pixels :  400 * resources.displayMetrics.density.toInt() ("dp" value transformed to pixel here)
+- MATCH_PARENT : match the size of the parent element
+
+###### 2. height
+Works the same way the width
+
+###### 3. window type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+TYPE_APPLICATION_OVERLAY is used for overlays that should appear on top of all other apps, but it requires the SYSTEM_ALERT_WINDOW permission on Android 8.0 (API level 26) and above. It is the only type that works with services and fit to work with ViewTreeLifecycleOwner
+
+Other possible "non deprecated" ways to setup the type :
+- TYPE_APPLICATION : the default window type that belongs the app
+- TYPE_APPLICATION_PANEL : Used to show dialogs/popups that appears above the main app.
+- TYPE_APPLICATION_ATTACHED_DIALOG : same than "APPLICATION_PANEL but belongs the state of a specific activity's main window"
+
+- 4. window flag = 
+- 5. format = 
 
 
 
