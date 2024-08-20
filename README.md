@@ -104,7 +104,7 @@ It is called at 3 different places :
 ##### private fun getLayoutParams(): WindowManager.LayoutParams
 Method that returns a "WindowManager.LayoutParams" object affected to params. It sets the properties that control the appearance, positioning, and behavior of the overlay. The params of WindowManager.LayoutParams(...) between the braces cannot be named as it is a Java and non kotlin nested class. The class "LayoutParams" has an overloaded constructor, so many versions of it exist. We will use the version with these params here :
 
-###### width = WindowManager.LayoutParams.WRAP_CONTENT
+###### 1. width = WindowManager.LayoutParams.WRAP_CONTENT
 These constant specify that the width of the overlay should be just large enough to fit the content inside it. The overlay will not occupy more space than necessary.
 
 Other possible ways to setup the width :
@@ -122,8 +122,53 @@ Other possible "non deprecated" ways to setup the type :
 - TYPE_APPLICATION_PANEL : Used to show dialogs/popups that appears above the main app.
 - TYPE_APPLICATION_ATTACHED_DIALOG : same than "APPLICATION_PANEL but belongs the state of a specific activity's main window"
 
-- 4. window flag = 
-- 5. format = 
+###### 4. window flag = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+The flags control sthe behavior of the window, they can be combined by using the bitwise operator "or".
+- FLAG_NOT_TOUCH_MODAL : This flag allows touches outside the overlay's bounds to pass through to underlying windows. Without this flag, the overlay might consume all touch events, even those outside its visible area.
+
+Other possible flags :
+| FLAG | DESCRIPTION |
+|------|-------------|
+| FLAG_NOT_FOCUSABLE | This flag indicates that the window cannot receive input focus, which means it cannot intercept key events or other input. The window will still receive touch events, but they will be passed through to the underlying window. |
+| FLAG_NOT_TOUCHABLE | When this flag is set, the window will not receive any touch events. All touch events will pass through to windows below it. |
+| FLAG_SHOW_WHEN_LOCKED | This flag allows the window to be shown even when the screen is locked. |
+| FLAG_KEEP_SCREEN_ON | This flag prevents the screen from dimming or turning off while the window is visible. |
+| FLAG_DIM_BEHIND | This flag dims everything behind the window, making the current window stand out more prominently. |
+| FLAG_BLUR_BEHIND | This flag blurs everything behind the window. It is deprecated because blurring the background is now handled in different ways in modern Android versions. |
+| FLAG_FULLSCREEN | This flag requests that the window is shown in full-screen mode, meaning it will hide the status bar and other system decorations. |
+| FLAG_LAYOUT_IN_SCREEN | Allows the window to extend into the screen's non-decorated areas, like the status bar. |
+| FLAG_LAYOUT_NO_LIMITS | This flag allows the overlay to extend beyond the screen edges. This can be useful if you want the overlay to partially or fully extend off the screen, which might be necessary for certain UI designs or animations. |
+| FLAG_ALT_FOCUSABLE_IM | This flag alters how the window interacts with the soft keyboard. If the flag is set, the window won't automatically receive focus when the keyboard is shown. |
+| FLAG_TRANSLUCENT_STATUS | This flag makes the status bar translucent, allowing the window to draw under it with a faded effect. |
+| FLAG_TRANSLUCENT_NAVIGATION | Similar to FLAG_TRANSLUCENT_STATUS, but for the navigation bar. It makes the navigation bar translucent, allowing the window to draw under it. |
+| FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS | This flag indicates that the window should be responsible for drawing the background for the system bars (status and navigation bars). |
+| FLAG_SECURE | This flag prevents the window's content from being captured in screenshots or by screen recording. |
+| FLAG_TOUCHABLE_WHEN_WAKING | Allows the window to receive touch events when the screen is waking up; |
+| FLAG_LAYOUT_INSET_DECOR | Allows the window to be laid out within the decor view, which includes the status bar and other system decorations. |
+| FLAG_WATCH_OUTSIDE_TOUCH | This flag allows the window to receive a callback when a touch event happens outside its bounds, but only if it doesn't consume the event itself. |
+| FLAG_HARDWARE_ACCELERATED | Forces the window to be hardware-accelerated. |
+| FLAG_IGNORE_CHEEK_PRESSES | This flag prevents the window from responding to touch events that are likely accidental, such as when the user inadvertently touches the screen with their cheek during a phone call. |
+
+
+###### 5. format = PixelFormat.TRANSLUCENT
+PixelFormat.TRANSLUCENT : This pixel format means that the window can be partially transparent. The overlay will be drawn on top of other windows, but the background behind it can still be partially visible. This is useful if your overlay has transparent regions.
+
+Other possible PixelFormats : 
+| PIXEL FORMAT           | DESCRIPTION                              |
+|------------------------|------------------------------------------|
+| `PixelFormat.OPAQUE`    | No transparency, best for performance.  |
+| `PixelFormat.TRANSLUCENT`| Supports partial transparency.         |
+| `PixelFormat.TRANSPARENT`| Fully transparent windows.             |
+| `PixelFormat.RGBA_8888` | High-quality with full color and transparency support. |
+| `PixelFormat.RGB_888`   | High-quality without transparency.      |
+| `PixelFormat.RGB_565`   | Lower quality, better performance.      |
+| `PixelFormat.A_8`       | Alpha channel only, useful for masks.   |
+| `PixelFormat.L_8`       | Grayscale without transparency.         |
+| `PixelFormat.LA_88`     | Grayscale with transparency.            |
+| `PixelFormat.RGBA_4444` | Deprecated, low color fidelity.         |
+
+
+
 
 
 
