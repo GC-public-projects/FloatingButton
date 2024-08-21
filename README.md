@@ -72,17 +72,23 @@ The class inherits of Service and implements 2 interfaces
  - private lateinit var windowManager : critical component that will allow us to add, update or remove views (UI elements) independent of any specific activity.
  - private var overlayView : View that will be affected the ComposeView created later in the service 
 
+
+#### Companion object
+
+
+- private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY &  private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY : Constants used as extra of the intents we will create in order to start the service
+
 #### Overrided methods from Service mother class():
 ##### override fun onCreate()
 Method that handle the initial setup when the service is created. windowManeger is affected the WINDOW_SERVICE in order to use it later to display the windows/overlays. \_savedStateRegistryController is attached to the service and restored in order to retrieve the former states of the ComposeView in case the service was killed and restarted.
 
-###### override fun onBind(intent: Intent?)
+##### override fun onBind(intent: Intent?)
 Method not used in this case as the service must run regardless any activity
 
-###### override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int
+##### override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int
 Method called each time startService() is called (from an activity or another component). In function of the extras of the intent used to start the service, the method "showOverlay()" or hideOverlay() will be called. This method return an integer code that will indicate the behavior of the service when it is killed. In this case, START_NOT_STICKY indicates that the service should not be restarted automatically.
 
-###### override fun onDestroy()
+##### override fun onDestroy()
 Method called when the service is stopped by the app or by the system. To avoid Memory leaks, the overlay view is removed from windowManager and affected to null.The lifecycle event is setup to ON_DESTROY in order to clean all the active components.
 
 #### Other personal methods 
@@ -122,8 +128,8 @@ Other possible "non deprecated" ways to setup the type :
 - TYPE_APPLICATION_PANEL : Used to show dialogs/popups that appears above the main app.
 - TYPE_APPLICATION_ATTACHED_DIALOG : same than "APPLICATION_PANEL but belongs the state of a specific activity's main window"
 
-###### 4. window flag = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-The flags control sthe behavior of the window, they can be combined by using the bitwise operator "or".
+###### 4. window flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+The flags control the behavior of the window, they can be combined by using the bitwise operator "or".
 - FLAG_NOT_TOUCH_MODAL : This flag allows touches outside the overlay's bounds to pass through to underlying windows. Without this flag, the overlay might consume all touch events, even those outside its visible area.
 
 Other possible flags :
@@ -156,16 +162,70 @@ PixelFormat.TRANSLUCENT : This pixel format means that the window can be partial
 Other possible PixelFormats : 
 | PIXEL FORMAT           | DESCRIPTION                              |
 |------------------------|------------------------------------------|
-| `PixelFormat.OPAQUE`    | No transparency, best for performance.  |
-| `PixelFormat.TRANSLUCENT`| Supports partial transparency.         |
-| `PixelFormat.TRANSPARENT`| Fully transparent windows.             |
-| `PixelFormat.RGBA_8888` | High-quality with full color and transparency support. |
-| `PixelFormat.RGB_888`   | High-quality without transparency.      |
-| `PixelFormat.RGB_565`   | Lower quality, better performance.      |
-| `PixelFormat.A_8`       | Alpha channel only, useful for masks.   |
-| `PixelFormat.L_8`       | Grayscale without transparency.         |
-| `PixelFormat.LA_88`     | Grayscale with transparency.            |
-| `PixelFormat.RGBA_4444` | Deprecated, low color fidelity.         |
+| PixelFormat.OPAQUE    | No transparency, best for performance.  |
+| PixelFormat.TRANSPARENT| Fully transparent windows.             |
+| PixelFormat.RGBA_8888 | High-quality with full color and transparency support. |
+| PixelFormat.RGB_888   | High-quality without transparency.      |
+| PixelFormat.RGB_565   | Lower quality, better performance.      |
+| PixelFormat.A_8       | Alpha channel only, useful for masks.   |
+| PixelFormat.L_8       | Grayscale without transparency.         |
+| PixelFormat.LA_88     | Grayscale with transparency.            |
+| PixelFormat.RGBA_4444 | Deprecated, low color fidelity.         |
+
+##### .apply { gravity = Gravity.CENTER }
+Ensure the ComposeView is displayed on the middle of the screen. The gravity attributes can be combined by using the bitwise operator "or" like the "flags"
+
+Other Gravity attributes : 
+
+| GRAVITY ATTRIBUTE              | DESCRIPTION |
+|--------------------------------|-------------|
+| Gravity.TOP                    | Aligns the window to the top of the screen or parent.                                               |
+| Gravity.BOTTOM                 | Aligns the window to the bottom of the screen or parent.                                             |
+| Gravity.LEFT                   | Aligns the window to the left side of the screen or parent.                                         |
+| Gravity.RIGHT                  | Aligns the window to the right side of the screen or parent.                                        |
+| Gravity.CENTER                 | Centers the window horizontally and vertically within the screen or parent.                         |
+| Gravity.CENTER_HORIZONTAL      | Centers the window horizontally within the screen or parent.                                        |
+| Gravity.CENTER_VERTICAL        | Centers the window vertically within the screen or parent.                                          |
+| Gravity.FILL                   | Expands the window to fill the entire screen or parent.                                              |
+| Gravity.FILL_HORIZONTAL        | Expands the window to fill the entire width of the screen or parent.                                |
+| Gravity.FILL_VERTICAL          | Expands the window to fill the entire height of the screen or parent.                               |
+| Gravity.START                  | Aligns the window to the start of the screen or parent, considering the layout direction (LTR or RTL). |
+| Gravity.END                    | Aligns the window to the end of the screen or parent, considering the layout direction (LTR or RTL).   |
+| Gravity.CLIP_VERTICAL          | Clips the vertical position to fit within the screen or parent.                                      |
+| Gravity.CLIP_HORIZONTAL        | Clips the horizontal position to fit within the screen or parent.                                    |
+| Gravity.HORIZONTAL_GRAVITY_MASK| Mask for horizontal gravity constants.                                                              |
+| Gravity.VERTICAL_GRAVITY_MASK  | Mask for vertical gravity constants.                                                                |
+
+
+Some other attributs of the "LayoutParams" nested class that are also not present in the constructor can be setup to : 
+
+| LAYOUTPARAMS ATTRIBUTE   | DESCRIPTION |
+|--------------------------|-------------|
+| x                        | The x-coordinate of the window's position on the screen.                                       |
+| y                        | The y-coordinate of the window's position on the screen.                                       |
+| windowAnimations         | The animation style resource for the window.                                                   |
+| dimAmount                | The amount of dimming behind the window when it is displayed.                                  |
+| screenBrightness         | The desired brightness of the screen for the window (0.0 to 1.0).                              |
+| alpha                    | The opacity level of the window (0.0 for fully transparent, 1.0 for fully opaque).             |
+| softInputMode            | How the window interacts with the soft input area (keyboard).                                  |
+| token                    | The token of another window that this window is attached to.                                   |
+| horizontalMargin         | Horizontal margin for the window, relative to the screen size.                                 |
+| verticalMargin           | Vertical margin for the window, relative to the screen size.                                   |
+| title                    | The title of the window, used primarily for debugging purposes.                                |
+| packageName              | The package name of the application that owns this window.                                     |
+| screenOrientation        | The preferred screen orientation for the window.                                               |
+| preferredDisplayModeId   | The ID of the preferred display mode for the window.                                           |
+| buttonBrightness         | The brightness of the button backlights for the window (0.0 to 1.0).                           |
+| rotationAnimation        | The rotation animation type used when rotating the device while this window is displayed.      |
+| systemUiVisibility       | Flags for controlling the visibility of system UI components (status bar, navigation bar, etc.).|
+| preferredRefreshRate     | The preferred refresh rate for the window's display.                                           |
+
+
+
+
+
+
+
 
 
 

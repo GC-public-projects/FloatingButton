@@ -23,6 +23,26 @@ class ComposeOverlayService :
     Service(),
     LifecycleOwner,
     SavedStateRegistryOwner {
+    companion object {
+        private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY =
+            "INTENT_EXTRA_COMMAND_SHOW_OVERLAY"
+        private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY =
+            "INTENT_EXTRA_COMMAND_HIDE_OVERLAY"
+
+        private fun startService(context: Context, command: String) {
+            val intent = Intent(context, ComposeOverlayService::class.java)
+            intent.putExtra(command, true)
+            context.startService(intent)
+        }
+
+        internal fun showOverlay(context: Context) {
+            startService(context, INTENT_EXTRA_COMMAND_SHOW_OVERLAY)
+        }
+
+        internal fun hideOverlay(context: Context) {
+            startService(context, INTENT_EXTRA_COMMAND_HIDE_OVERLAY)
+        }
+    }
     private val _lifecycleRegistry = LifecycleRegistry(this)
     override val lifecycle: Lifecycle = _lifecycleRegistry
     private val _savedStateRegistryController: SavedStateRegistryController =
@@ -106,26 +126,5 @@ class ComposeOverlayService :
             gravity = Gravity.CENTER
         }
 
-    }
-
-    companion object {
-        private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY =
-            "INTENT_EXTRA_COMMAND_SHOW_OVERLAY"
-        private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY =
-            "INTENT_EXTRA_COMMAND_HIDE_OVERLAY"
-
-        private fun startService(context: Context, command: String) {
-            val intent = Intent(context, ComposeOverlayService::class.java)
-            intent.putExtra(command, true)
-            context.startService(intent)
-        }
-
-        internal fun showOverlay(context: Context) {
-            startService(context, INTENT_EXTRA_COMMAND_SHOW_OVERLAY)
-        }
-
-        internal fun hideOverlay(context: Context) {
-            startService(context, INTENT_EXTRA_COMMAND_HIDE_OVERLAY)
-        }
     }
 }
