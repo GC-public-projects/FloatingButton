@@ -74,9 +74,27 @@ The class inherits of Service and implements 2 interfaces
 
 
 #### Companion object
+Functions and parameters in relation with the service that will be needed to start it and give it some instructions to do.
+
+##### private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY &  private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY
+Constants used as extra of the intents we will create in order to start the service.
+
+##### private fun startService(context: Context, command: String)
+method used to start the service. the params are the context of the MainActivity and the extra (string) of the intent. 
+
+- val intent = Intent(context, ComposeOverlayService::class.java) :The intent is setup with the context of the activity from it is called an the service. 
+
+- "intent.putExtra(command, true)" : the extra is added in order to indicate to the service what it needs to do when the method "onStartCommand" is called. 
+
+- context.startService(intent) : Once the intent is setup, the Service is started from the context of the activity it is called by using "context.startService(intent)" with the intent as param. 
+
+In Android, by design, only one instance of a particular Service can exist at a time. So the 1st time the service is started it will be instanciated ,then "onCreate()" and "onStartCommand" will be called and once the service is running, when the service is started, only "onStartCommand" will be called in the existing instance.
+
+##### internal fun showOverlay(context: Context) & internal fun hideOverlay(context: Context)
+methods called from the MainScreen that will call startService(context: Context, command: String) with the context of the activity from it is called and the extra dedicated to the method.
 
 
-- private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY &  private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY : Constants used as extra of the intents we will create in order to start the service
+
 
 #### Overrided methods from Service mother class():
 ##### override fun onCreate()
@@ -221,25 +239,7 @@ Some other attributs of the "LayoutParams" nested class that are also not presen
 | preferredRefreshRate     | The preferred refresh rate for the window's display.                                           |
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Content
+### Class content
 - create Kotlin class/file in Main package named "ComposeOverlayService"
 ``` kotlin
 class ComposeOverlayService :
