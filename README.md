@@ -136,7 +136,7 @@ Other possible ways to setup the width :
 - MATCH_PARENT : match the size of the parent element
 
 ###### 2. height
-Works the same way the width
+Works the same way than the width
 
 ###### 3. window type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 TYPE_APPLICATION_OVERLAY is used for overlays that should appear on top of all other apps, but it requires the SYSTEM_ALERT_WINDOW permission on Android 8.0 (API level 26) and above. It is the only type that works with services and fit to work with ViewTreeLifecycleOwner
@@ -246,14 +246,35 @@ class ComposeOverlayService :
     Service(),
     LifecycleOwner,
     SavedStateRegistryOwner {
+    companion object {
+        private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY =
+            "INTENT_EXTRA_COMMAND_SHOW_OVERLAY"
+        private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY =
+            "INTENT_EXTRA_COMMAND_HIDE_OVERLAY"
+
+        private fun startService(context: Context, command: String) {
+            val intent = Intent(context, ComposeOverlayService::class.java)
+            intent.putExtra(command, true)
+            context.startService(intent)
+        }
+
+        internal fun showOverlay(context: Context) {
+            startService(context, INTENT_EXTRA_COMMAND_SHOW_OVERLAY)
+        }
+
+        internal fun hideOverlay(context: Context) {
+            startService(context, INTENT_EXTRA_COMMAND_HIDE_OVERLAY)
+        }
+    }
     private val _lifecycleRegistry = LifecycleRegistry(this)
+    override val lifecycle: Lifecycle = _lifecycleRegistry
     private val _savedStateRegistryController: SavedStateRegistryController =
         SavedStateRegistryController.create(this)
     override val savedStateRegistry: SavedStateRegistry =
         _savedStateRegistryController.savedStateRegistry
-    override val lifecycle: Lifecycle = _lifecycleRegistry
 
-    lateinit var windowManager: WindowManager
+
+    private lateinit var windowManager: WindowManager
     private var overlayView: View? = null
 
     override fun onCreate() {
@@ -321,42 +342,15 @@ class ComposeOverlayService :
         return WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
-//            400 * resources.displayMetrics.density.toInt(),
-//            400 * resources.displayMetrics.density.toInt(),
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.CENTER
         }
 
     }
-
-    companion object {
-        private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY =
-            "INTENT_EXTRA_COMMAND_SHOW_OVERLAY"
-        private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY =
-            "INTENT_EXTRA_COMMAND_HIDE_OVERLAY"
-
-        private fun startService(context: Context, command: String) {
-            val intent = Intent(context, ComposeOverlayService::class.java)
-            intent.putExtra(command, true)
-            context.startService(intent)
-        }
-
-        internal fun showOverlay(context: Context) {
-            startService(context, INTENT_EXTRA_COMMAND_SHOW_OVERLAY)
-        }
-
-        internal fun hideOverlay(context: Context) {
-            startService(context, INTENT_EXTRA_COMMAND_HIDE_OVERLAY)
-        }
-    }
-
 }
-
 ```
 
 
