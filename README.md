@@ -56,7 +56,7 @@ dependencies {
 Service that will create the ComposeView as an overlay on the top of the screen.
 
 ### Content
-- create Kotlin class/file in Main package named "ComposeOverlayService"
+- create Kotlin Class/File in Main package named "ComposeOverlayService"
 ``` kotlin
 class ComposeOverlayService :
     Service(),
@@ -240,7 +240,7 @@ It is called at 3 different places :
 - called when onDestroy() is called.
 
 #### `private fun getLayoutParams(): WindowManager.LayoutParams` :
-Method that returns a "WindowManager.LayoutParams" object affected to params. It sets the properties that control the appearance, positioning, and behavior of the overlay. The params of WindowManager.LayoutParams(...) between the braces cannot be named as it is a Java and non kotlin nested class. The class "LayoutParams" has an overloaded constructor, so many versions of it exist. We will use the version with these params here :
+Method that returns a "WindowManager.LayoutParams" object affected to params. It sets the properties that control the appearance, positioning, and behavior of the overlay. The params of WindowManager.LayoutParams(...) between the braces cannot be named as it is a Java and non kotlin nested class. The class "LayoutParams" has many overloaded constructors. We will use the version with these params here :
 
 ##### 1. `width = WindowManager.LayoutParams.WRAP_CONTENT` :
 These constant specify that the width of the overlay should be just large enough to fit the content inside it. The overlay will not occupy more space than necessary.
@@ -356,17 +356,91 @@ Some other attributs of the "LayoutParams" nested class that are also not presen
 | preferredRefreshRate     | The preferred refresh rate for the window's display.                                           |
 
 
+## MyFloatingComposable (composable)
+Button that will be added to the ComposeView 
 
+### Purpose
+Display a floating button over all the other apps. As the ComposeView was setup with the param type "TYPE_APPLICATION_OVERLAY", all its content is floating.
+
+### Content
+create in the main package a kotlin Class/File named : "MyFloatingComposable "
+
+``` kotlin
+@Composable
+fun MyFloatingComposable(
+    hideOverlay: () -> Unit,
+) {
+    Button(
+        onClick = { hideOverlay() },
+        modifier = Modifier
+            .padding(0.dp)
+
+    ) {
+        Text(
+            text = "Close Overlay",
+            modifier = Modifier.padding(0.dp)
+        )
+    }
+}
+```
+
+### Components explanations
+
+- The fun `hideOverlay()` is passed as param in order to use it when the button "Close Overlay" is used.
 
 
 
 
 ## MainActivity (class)
 
-### Content
-
 ### Purpose
-- call the alert dialog to 
+- Triggers an alert permission dialog in order to allow the app to be displayed over the other apps via the dedicated settings
+
+### Content
+Modify the MainActivity file like that
+
+``` kotlin
+class MainActivity : ComponentActivity() {
+    private val context = this
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            FloatingButtonTheme {
+                var showPermissionDialog by remember { mutableStateOf(false) }
+                val modifyShowPermissionDialog = { bool: Boolean -> showPermissionDialog = bool }
+
+                LaunchedEffect(Unit) {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // Android 6.0 (Marshmallow) and above
+                        if (!Settings.canDrawOverlays(context)) {
+                            modifyShowPermissionDialog(true)
+                        }
+                    }
+                }
+                if(showPermissionDialog) {
+                    PermissionDialog(
+                        message = "\"Display over other apps\" permission required !",
+                        onDismiss = { modifyShowPermissionDialog(false) },
+                        onConfirm = { openOverlaySettings(); modifyShowPermissionDialog(false) }
+                    )
+                } else { MainScreen(context = context, modifyShowPermissionDialog)  }
+            }
+        }
+    }
+    private fun openOverlaySettings() {
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
+            data = Uri.fromParts("package", packageName, null)
+        }
+        startActivity(intent)
+    }
+}
+```
+
+### Components explanations
+
+- `private val context` : the context of the 
+
+
 
 
 
