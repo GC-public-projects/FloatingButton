@@ -190,10 +190,10 @@ The class inherits of Service and implements 2 interfaces
 #### Companion object
 Functions and parameters in relation with the service that will be needed to start it and give it some instructions to do.
 
-##### private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY &  private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY
+##### `private const val INTENT_EXTRA_COMMAND_SHOW_OVERLAY` & `private const val INTENT_EXTRA_COMMAND_HIDE_OVERLAY`
 Constants used as extra of the intents we will create in order to start the service.
 
-##### private fun startService(context: Context, command: String)
+##### `private fun startService(context: Context, command: String)`
 method used to start the service. the params are the context of the MainActivity and the extra (string) of the intent. 
 
 - `val intent = Intent(context, ComposeOverlayService::class.java)` : The intent is setup with the context of the activity from it is called an the service. 
@@ -204,33 +204,33 @@ method used to start the service. the params are the context of the MainActivity
 
 In Android, by design, only one instance of a particular Service can exist at a time. So the 1st time the service is started it will be instanciated ,then "onCreate()" and "onStartCommand" will be called and once the service is running, when the service is started, only "onStartCommand" will be called in the existing instance.
 
-##### internal fun showOverlay(context: Context) & internal fun hideOverlay(context: Context)
+##### `internal fun showOverlay(context: Context)` & `internal fun hideOverlay(context: Context)`
 methods called from the MainScreen that will call startService(context: Context, command: String) with the context of the activity from it is called and the extra dedicated to the method.
 
 
 
 
 #### Overrided methods from Service mother class():
-##### override fun onCreate()
+##### `override fun onCreate()`
 Method that handle the initial setup when the service is created. windowManeger is affected the WINDOW_SERVICE in order to use it later to display the windows/overlays. \_savedStateRegistryController is attached to the service and restored in order to retrieve the former states of the ComposeView in case the service was killed and restarted.
 
-##### override fun onBind(intent: Intent?)
+##### `override fun onBind(intent: Intent?)`
 Method not used in this case as the service must run regardless any activity
 
-##### override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int
+##### `override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int`
 Method called each time startService() is called (from an activity or another component). In function of the extras of the intent used to start the service, the method "showOverlay()" or hideOverlay() will be called. This method return an integer code that will indicate the behavior of the service when it is killed. In this case, START_NOT_STICKY indicates that the service should not be restarted automatically.
 
-##### override fun onDestroy()
+##### `override fun onDestroy()`
 Method called when the service is stopped by the app or by the system. To avoid Memory leaks, the overlay view is removed from windowManager and affected to null.The lifecycle event is setup to ON_DESTROY in order to clean all the active components.
 
 #### Other personal methods 
-##### private fun showOverlay()
+##### `private fun showOverlay()`
 Method called each time the intent that contains the extra : "INTENT_EXTRA_COMMAND_SHOW_OVERLAY" is launched to start the service (handled in "onStartCommand"). The lifecycle events ON_START and ON_RESUME are started in order to prepare the view to be created. 
 - `val params` : constant that is affected the parameters required to add the view to windowManager. the fun getLayoutParams() will be explained later
 - `overlayView` : it is affected a new ComposeView with our custom flaoting composable as content. setViewTreeLifecycleOwner(this@ComposeOverlayService) & setViewTreeSavedStateRegistryOwner(this@ComposeOverlayService) are applied to the ComposeView and are mandatory to implement the lifecycle events and the state management on it.
 - `windowManager` : is added the view and the params just created before in the function. Once the view is added, it is displayed on the screen.
 
-##### private fun hideOverlay() 
+##### `private fun hideOverlay()`
 Method that remove the ComposeView with the Overlay composable from the screen. The lifecycle events ON_PAUSE and ON_STOP are started to replicate the behavior of an activity when it is paused or stopped.
 
 
@@ -239,10 +239,10 @@ It is called at 3 different places :
 - also called from the button "Hide overlay" in the floating composable.
 - called when onDestroy() is called.
 
-##### private fun getLayoutParams(): WindowManager.LayoutParams
+##### `private fun getLayoutParams(): WindowManager.LayoutParams`
 Method that returns a "WindowManager.LayoutParams" object affected to params. It sets the properties that control the appearance, positioning, and behavior of the overlay. The params of WindowManager.LayoutParams(...) between the braces cannot be named as it is a Java and non kotlin nested class. The class "LayoutParams" has an overloaded constructor, so many versions of it exist. We will use the version with these params here :
 
-###### 1. width = WindowManager.LayoutParams.WRAP_CONTENT
+###### 1. `width = WindowManager.LayoutParams.WRAP_CONTENT`
 These constant specify that the width of the overlay should be just large enough to fit the content inside it. The overlay will not occupy more space than necessary.
 
 Other possible ways to setup the width :
@@ -250,11 +250,11 @@ Other possible ways to setup the width :
 | 600 (exemple) |  raw value in pixels, 400 * resources.displayMetrics.density.toInt() (exemple 2 : "dp" value transformed to pixel here) |
 | MATCH_PARENT | match the size of the parent element |
 
-###### 2. height
+###### 2. `height = WindowManager.LayoutParams.WRAP_CONTENT`
 Works the same way than the width
 
-###### 3. window type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-TYPE_APPLICATION_OVERLAY is used for overlays that should appear on top of all other apps, but it requires the SYSTEM_ALERT_WINDOW permission on Android 8.0 (API level 26) and above. It is the only type that works with services and fit to work with ViewTreeLifecycleOwner
+###### 3. `window type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY`
+`TYPE_APPLICATION_OVERLAY` is used for overlays that should appear on top of all other apps, but it requires the SYSTEM_ALERT_WINDOW permission on Android 8.0 (API level 26) and above. It is the only type that works with services and fit to work with ViewTreeLifecycleOwner
 
 Other possible "non deprecated" ways to setup the type :
 | TYPE | DESCRITPION |
@@ -263,9 +263,9 @@ Other possible "non deprecated" ways to setup the type :
 |TYPE_APPLICATION_PANEL | Used to show dialogs/popups that appears above the main app. |
 |YPE_APPLICATION_ATTACHED_DIALOG | same than "APPLICATION_PANEL but belongs the state of a specific activity's main window |
 
-###### 4. window flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+###### 4. `window flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL`
 The flags control the behavior of the window, they can be combined by using the bitwise operator "or".
-- FLAG_NOT_TOUCH_MODAL : This flag allows touches outside the overlay's bounds to pass through to underlying windows. Without this flag, the overlay might consume all touch events, even those outside its visible area.
+- `FLAG_NOT_TOUCH_MODAL` : This flag allows touches outside the overlay's bounds to pass through to underlying windows. Without this flag, the overlay might consume all touch events, even those outside its visible area.
 
 Other possible flags :
 | FLAG | DESCRIPTION |
@@ -291,8 +291,8 @@ Other possible flags :
 | FLAG_IGNORE_CHEEK_PRESSES | This flag prevents the window from responding to touch events that are likely accidental, such as when the user inadvertently touches the screen with their cheek during a phone call. |
 
 
-###### 5. format = PixelFormat.TRANSLUCENT
-PixelFormat.TRANSLUCENT : This pixel format means that the window can be partially transparent. The overlay will be drawn on top of other windows, but the background behind it can still be partially visible. This is useful if your overlay has transparent regions.
+###### 5. `format = PixelFormat.TRANSLUCENT`
+`PixelFormat.TRANSLUCENT` : This pixel format means that the window can be partially transparent. The overlay will be drawn on top of other windows, but the background behind it can still be partially visible. This is useful if your overlay has transparent regions.
 
 Other possible PixelFormats : 
 | PIXEL FORMAT           | DESCRIPTION                              |
