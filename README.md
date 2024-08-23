@@ -10,7 +10,7 @@ This project is for Jetpack Compose initiated user
 The goal of this demo is to explain the way to show and hide a composable (button) over all the apps. In order to keep the app the more simple possible, the button wont be draggable. Another app will be created later in order to show some advanced features like the way to drag the composView on the screen.
 
 ## Overview
-<img src="/app/screenshots/1.png" alt="screenshot Mainscreen" height="100">&emsp;
+<img src="/app/screenshots/1.png" alt="screenshot Mainscreen" height="300">&emsp;
 
 ## Required
 - 1 permission required : SYSTEM_ALERT_WINDOW (display over other apps)
