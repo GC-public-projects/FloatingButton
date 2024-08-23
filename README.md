@@ -247,6 +247,7 @@ These constant specify that the width of the overlay should be just large enough
 
 Other possible ways to setup the width :
 | LAYOUTPARAMS | DESCRIPTION |
+|-------------|--------------|
 | 600 (exemple) |  raw value in pixels, 400 * resources.displayMetrics.density.toInt() (exemple 2 : "dp" value transformed to pixel here) |
 | MATCH_PARENT | match the size of the parent element |
 
@@ -357,7 +358,7 @@ Some other attributs of the "LayoutParams" nested class that are also not presen
 
 
 ## MyFloatingComposable (composable)
-Button that will be added to the ComposeView 
+Button that will be added to the ComposeView of the service
 
 ### Purpose
 Display a floating button over all the other apps. As the ComposeView was setup with the param type "TYPE_APPLICATION_OVERLAY", all its content is floating.
@@ -389,15 +390,13 @@ fun MyFloatingComposable(
 - The fun `hideOverlay()` is passed as param in order to use it when the button "Close Overlay" is used.
 
 
-
-
 ## MainActivity (class)
 
 ### Purpose
-- Triggers an alert permission dialog in order to allow the app to be displayed over the other apps via the dedicated settings
+- Triggers an alert permission dialog in order to allow the app to be displayed over the other apps via the dedicated settings "Display over other apps"
 
 ### Content
-Modify the MainActivity file like that
+Modify the "MainActivity" file like that
 
 ``` kotlin
 class MainActivity : ComponentActivity() {
@@ -438,12 +437,61 @@ class MainActivity : ComponentActivity() {
 
 ### Components explanations
 
-- `private val context` : the context of the 
+- `private val context` : the context of the MainActivity needs to be used in the intent to create the service.
+
+- `var showPermissionDialog` & `val modifyShowPermissionDialog` flag with its setter to show or not a dialog box in order to go to the settings "Display over other apps"
+
+- `LaunchedEffect(Unit)` : the content will test if the required permission is allowed by using "Settings.canDrawOverlays" and will set the flag to show the alert dialog to true.
+
+As not any state is used as param we ensure when the MainActivityContent is recomposed, the content of the "LaunchedEffect" is not executed again. 
+The test of the Android version is usefull only if the minSDK version is lesser than 6.
 
 
+`PermissionDialog` : composable we will explain later in order to access the overlay settings of the app. It is displayed if "showPermissionDialog" = true
+
+`MainScreen` : composable we will explain later. It is the only GUI of the app, It contents 2 buttons in order to display or hide our overlay button via the service.
 
 
+`private fun openOverlaySettings()` : Method that handle the display of the settings "Display over other apps"
 
 
+## PermissionDialog (composable)
+
+### Purpose
+Shows an alert dialog in order to go "Display over other apps" settings activate the permission.
+
+### Content
+
+``` kotlin
+@Composable
+fun PermissionDialog(
+    message: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Permission Required") },
+        text = { Text(text = message) },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(text = "Overlay Settings")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text(text = "Deny")
+            }
+        }
+    )
+}
+```
+
+### Components explanations
+
+- `onDismiss` : High order function used in the dismissButton. When it is called from the MainActivity, "{ modifyShowPermissionDialog(false) }" is assigned to it
+
+- `onConfirm` : High order function used in the confirmButton When it is called from the MainActivity, "{ openOverlaySettings(); modifyShowPermissionDialog(false) }" is assigned to it 
 
 
+## MainScreen (composable)
