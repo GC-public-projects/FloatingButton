@@ -9,6 +9,9 @@ This project is for Jetpack Compose initiated user
 ## Presentation
 The goal of this demo is to explain the way to show and hide a composable (button) over all the apps. In order to keep the app the more simple possible, the button wont be draggable. Another app will be created later in order to show some advanced features like the way to drag the composView on the screen.
 
+## Overview
+<img src="/app/screenshots/1.png" alt="screenshot Mainscreen" height="100">&emsp;
+
 ## Required
 - 1 permission required : SYSTEM_ALERT_WINDOW (display over other apps)
 - 1 service needs to be created : In order to be able to use the other apps when the button is workable
@@ -461,6 +464,7 @@ The test of the Android version is usefull only if the minSDK version is lesser 
 Shows an alert dialog in order to go "Display over other apps" settings activate the permission.
 
 ### Content
+Create a Kotlin file on the main package named : "PermissionDialog"
 
 ``` kotlin
 @Composable
@@ -495,3 +499,44 @@ fun PermissionDialog(
 
 
 ## MainScreen (composable)
+
+### Purpose 
+Display 2 buttons in order to show and hide the overlay button via the service
+
+### Content
+In the main package create a kotlin file named "MainScreen "
+
+``` kotlin
+@Composable
+fun MainScreen(context: Context, modifyShowPermissionDialog: (Boolean) -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Spacer(modifier = Modifier.padding(100.dp))
+        Button(onClick = {
+            if (!Settings.canDrawOverlays(context)) {
+                modifyShowPermissionDialog(true)
+            } else {
+                ComposeOverlayService.showOverlay(context)
+            }
+        }) {
+            Text(text = "Show Overlay")
+        }
+        Button(onClick = {
+            ComposeOverlayService.hideOverlay(context)
+        }) {
+            Text(text = "Hide Overlay")
+        }
+    }
+}
+```
+
+### Components explanations
+
+The Composable takes 2 params : the `Context` of the main activity in order to start the service and the function `modifyShowPermissionDialog` in order to allow the app the display overlay in the settings in case the permission wasn't accepted before.
+
+- `Button "Show Overlay"` : Shows the alert dialog if the overlay permission is not accepted or start the service if it is. the function in the service is stopped by using "return" in case the overlayView is already assigned"
+
+- `Button "Hide Overlay"` : starts the service and asks it to hide the overlay. The function inside the service will remove the ComposeView only if it is not null.
+
