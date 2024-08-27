@@ -1,15 +1,18 @@
 # FloatingButton
 little JetPack compose app with the minimum features required to show and hide a button over the apps
 
-### Project status : Workable, documentation in progress...
+### Project status : Workable, documentation completed
 
 ## target audience
 This project is for Jetpack Compose initiated user
 
 ## Presentation
-The goal of this demo is to explain the way to show and hide a composable (button) over all the apps. In order to keep the app the more simple possible, the button wont be draggable. Another app will be created later in order to show some advanced features like the way to drag the composView on the screen.
+The goal of this demo is to explain the way to show and hide a composable (button) over all the apps. In order to keep the app the more simple possible & have only the mandatory components, the button wont be draggable. See "FloatingButtonV2-Draggable" in my Github to see the draggable version
 
 ## Overview
+- 1 : Content of the main screen
+- 2 : when app and ComposeView running
+- 3 : when app is closed and ComposeView running
 <img src="/app/screenshots/1.png" alt="Mainscreen" height="400">&emsp;
 <img src="/app/screenshots/2.png" alt="Mainscreen & overlay button" height="400">&emsp;
 <img src="/app/screenshots/3.png" alt="overlay button with app closed" height="400">
