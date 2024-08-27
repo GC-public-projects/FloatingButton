@@ -21,11 +21,7 @@ The goal of this demo is to explain the way to show and hide a composable (butto
 - 1 permission required : SYSTEM_ALERT_WINDOW (display over other apps)
 - 1 service needs to be created : In order to be able to use the other apps when the button is workable
 - 2 implementations required for the service ("LifecycleOwner" & "SavedStateRegistryOwner") : In order to use lifecycle-aware components (like Jetpack Compose, LiveData, etc.) in it, as by default services don't inherently have "lifecycle" & "state management" 
-- 1 additional library needed "androidx.savedstate" : required to implement "SavedStateRegistryOwner" in the service
-- No need to add the library "androidx.lifecycle" as by default in an empty jetpack compose project it is already implemented
-
-## Warning
-...
+- No need to add the libraries "androidx.lifecycle" and "androidx.savedstate" (sub library of androidx.activity:activity-compose) as by default in an empty jetpack compose project they are already implemented.
 
 # Init
 
