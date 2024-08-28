@@ -551,21 +551,6 @@ As whe have a button, the 2nd method will be used.
 Modify "MyFloatingComposable" like that :
 
 ``` kotlin
-import android.view.View
-import android.view.WindowManager
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
-
 @Composable
 fun MyFloatingComposable(
     hideOverlay: () -> Unit,
