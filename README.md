@@ -13,11 +13,13 @@ The goal of this demo is to explain the way to show and hide a draggable composa
 - 1 : Content of the main screen
 - 2 : when app and ComposeView running
 - 3 : when app is closed and ComposeView running
+- 4 : when app is closed, ComposeView running and button has been moved
 
 
 <img src="/app/screenshots/1.png" alt="Mainscreen" height="400">&emsp;
 <img src="/app/screenshots/2.png" alt="Mainscreen & overlay button" height="400">&emsp;
-<img src="/app/screenshots/3.png" alt="overlay button with app closed" height="400">
+<img src="/app/screenshots/3.png" alt="overlay button with app closed" height="400">&emsp;
+<img src="/app/screenshots/4.png" alt="overlay button moved with app closed" height="400">
 
 ## Required
 - 1 permission required : SYSTEM_ALERT_WINDOW (display over other apps)
@@ -558,8 +560,6 @@ fun MyFloatingComposable(
     windowManager: WindowManager,
     overlayView: View?
 ) {
-    var offsetX by remember { mutableFloatStateOf(0f) }
-    var offsetY by remember { mutableFloatStateOf(0f) }
     Button(
         onClick = { hideOverlay() },
         modifier = Modifier
@@ -567,12 +567,8 @@ fun MyFloatingComposable(
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-                    offsetX += dragAmount.x
-                    offsetY += dragAmount.y
-
-                    // Update the layout params of the overlayView
-                    params.x = offsetX.toInt()
-                    params.y = offsetY.toInt()
+                    params.x += dragAmount.x.toInt()
+                    params.y += dragAmount.y.toInt()
                     windowManager.updateViewLayout(overlayView, params)
                 }
             }
@@ -591,9 +587,22 @@ fun MyFloatingComposable(
 - `windowManager` : We need the existing object in order to apply the modified params to it.
 - `overlayView` : windowManager needs also the overlayView object to update it.
 
-#### Variables
-- `var offsetX` & `var offsetY` : remember by how much the drag gesture was done.
 
 #### Actions
-- `Modifier.pointerInput(Unit)` : method of the modifier in which `detectDragGestures` will by used. The drag gesture is captured in our "offsetX" and "offsetY" variables then our "params" object is updated by adding to it the x and y values. Once done, the view position is updated by using `windowManager.updateViewLayout(overlayView, params)`
+- `Modifier.pointerInput(Unit)` : method of the modifier setup to handle the gestures in which `detectDragGestures` will by used to capture the dragging ones. Our "params" object is updated by adding to it the moved x and y values. Once done, the view position is updated by using `windowManager.updateViewLayout(overlayView, params)`
+
+## ComposeOverlayService (class)
+
+### Content
+Modify the call of "MyFloatingComposable" in the showOverlay() fun like that : 
+``` kotlin
+setContent {
+    MyFloatingComposable(
+        ::hideOverlay,
+        params,
+        windowManager,
+        overlayView
+    )
+}
+```
 
