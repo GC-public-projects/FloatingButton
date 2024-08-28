@@ -95,7 +95,12 @@ class ComposeOverlayService :
             setViewTreeLifecycleOwner(this@ComposeOverlayService)
             setViewTreeSavedStateRegistryOwner(this@ComposeOverlayService)
             setContent {
-                MyFloatingComposable(::hideOverlay)
+                MyFloatingComposable(
+                    ::hideOverlay,
+                    params,
+                    windowManager,
+                    overlayView
+                )
             }
         }
 

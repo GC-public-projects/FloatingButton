@@ -1,5 +1,5 @@
 # FloatingButton
-little JetPack compose app with the minimum features required to show and hide a button over the apps
+little JetPack compose app with the minimum features required to show and hide a draggable button over the apps
 
 ### Project status : Workable, documentation completed
 
@@ -7,7 +7,7 @@ little JetPack compose app with the minimum features required to show and hide a
 This project is for Jetpack Compose initiated user
 
 ## Presentation
-The goal of this demo is to explain the way to show and hide a composable (button) over all the apps. In order to keep the app the more simple possible & have only the mandatory components, the button wont be draggable. See "FloatingButtonV2-Draggable" in my Github to see the draggable version
+The goal of this demo is to explain the way to show and hide a draggable composable (button) over all the apps. In order to gain in understanding, almost only mandatory components will be used.
 
 ## Overview
 - 1 : Content of the main screen
@@ -540,4 +540,81 @@ The Composable takes 2 params : the `Context` of the main activity in order to s
 - `Button "Show Overlay"` : Shows the alert dialog if the overlay permission is not accepted or start the service if it is. the function in the service is stopped by using "return" in case the overlayView is already assigned"
 
 - `Button "Hide Overlay"` : starts the service and asks it to hide the overlay. The function inside the service will remove the ComposeView only if it is not null.
+
+### As of now the project works but the button is not draggable
+
+# Making the button draggable
+There a re 2 ways 2 make a composView draggable :
+- `overlayView?.setOnTouchListener` : works only when the view is dragged from a non clickable component like a button
+- `Modifier.pointerInput` : works fine with clickable components. all the gestures are captured and modify in real time the x and y params of the view. Whatever "Modifier.pointerInput" is setup on the button itself or anther parent composable, the view remains draggable by non or clickable components.
+
+
+As whe have a button, the 2nd methos will be used.
+
+## MyFloatingComposable (composable)
+
+### Content
+Modify "MyFloatingComposable" like that :
+
+``` kotlin
+import android.view.View
+import android.view.WindowManager
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun MyFloatingComposable(
+    hideOverlay: () -> Unit,
+    params: WindowManager.LayoutParams,
+    windowManager: WindowManager,
+    overlayView: View?
+) {
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+    Button(
+        onClick = { hideOverlay() },
+        modifier = Modifier
+            .padding(0.dp)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+
+                    // Update the layout params of the overlayView
+                    params.x = offsetX.toInt()
+                    params.y = offsetY.toInt()
+                    windowManager.updateViewLayout(overlayView, params)
+                }
+            }
+    ) {
+        Text(
+            text = "Close Overlay",
+            modifier = Modifier.padding(0.dp)
+        )
+    }
+}
+```
+
+### Components explanations
+#### New params 
+- `params` : "WindowManager.LayoutParams" object setup with the view. We need the existing object in order to update the already existing x and y params following the drag gestures.
+- `windowManager` : We need the existing object in order to apply the modified params to it.
+- `overlayView` : windowManager needs also the overlayView object to update it.
+
+#### Variables
+- `var offsetX` & `var offsetY` : remember by how much the drag gesture was done.
+
+#### Actions
+- `Modifier..pointerInput(Unit)` : method of the modifier in which `detectDragGestures` will by used. The drag gesture is captured in our "offsetX" and "offsetY" variables then our "params" object is updated by adding to it the x and y values. Once done, the view position is updated by using `windowManager.updateViewLayout(overlayView, params)`
 
