@@ -1,4 +1,4 @@
-2# FloatingButton
+# FloatingButton
 little JetPack compose app with the minimum features required to show and hide a draggable button over the apps
 
 ### Project status : Workable, documentation completed
