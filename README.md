@@ -1,4 +1,4 @@
-# FloatingButton
+2# FloatingButton
 little JetPack compose app with the minimum features required to show and hide a draggable button over the apps
 
 ### Project status : Workable, documentation completed
@@ -538,12 +538,12 @@ The Composable takes 2 params : the `Context` of the main activity in order to s
 ### As of now the project works but the button is not draggable
 
 # Making the button draggable
-There a re 2 ways 2 make a composView draggable :
+There are 2 ways 2 make a composeView draggable :
 - `overlayView?.setOnTouchListener` : works only when the view is dragged from a non clickable component like a button
 - `Modifier.pointerInput` : works fine with clickable components. all the gestures are captured and modify in real time the x and y params of the view. Whatever "Modifier.pointerInput" is setup on the button itself or anther parent composable, the view remains draggable by non or clickable components.
 
 
-As whe have a button, the 2nd methos will be used.
+As whe have a button, the 2nd method will be used.
 
 ## MyFloatingComposable (composable)
 
@@ -610,5 +610,5 @@ fun MyFloatingComposable(
 - `var offsetX` & `var offsetY` : remember by how much the drag gesture was done.
 
 #### Actions
-- `Modifier..pointerInput(Unit)` : method of the modifier in which `detectDragGestures` will by used. The drag gesture is captured in our "offsetX" and "offsetY" variables then our "params" object is updated by adding to it the x and y values. Once done, the view position is updated by using `windowManager.updateViewLayout(overlayView, params)`
+- `Modifier.pointerInput(Unit)` : method of the modifier in which `detectDragGestures` will by used. The drag gesture is captured in our "offsetX" and "offsetY" variables then our "params" object is updated by adding to it the x and y values. Once done, the view position is updated by using `windowManager.updateViewLayout(overlayView, params)`
 
