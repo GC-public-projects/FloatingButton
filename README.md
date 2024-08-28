@@ -13,6 +13,8 @@ The goal of this demo is to explain the way to show and hide a draggable composa
 - 1 : Content of the main screen
 - 2 : when app and ComposeView running
 - 3 : when app is closed and ComposeView running
+
+
 <img src="/app/screenshots/1.png" alt="Mainscreen" height="400">&emsp;
 <img src="/app/screenshots/2.png" alt="Mainscreen & overlay button" height="400">&emsp;
 <img src="/app/screenshots/3.png" alt="overlay button with app closed" height="400">
@@ -42,14 +44,6 @@ In AndroidManifest.xml
 </service>
 </application>
 
-```
-## Libraries
-In build.gradle.kts
-``` kotlin
-dependencies {
-	...
-	implementation("androidx.savedstate:savedstate-ktx:1.2.1")
-}
 ```
 
 # Code
