@@ -16,10 +16,10 @@ The goal of this demo is to explain the way to show and hide a draggable composa
 - 4 : when app is closed, ComposeView running and button has been moved
 
 
-<img src="/app/screenshots/1.png" alt="Mainscreen" height="400">&emsp;
-<img src="/app/screenshots/2.png" alt="Mainscreen & overlay button" height="400">&emsp;
-<img src="/app/screenshots/3.png" alt="overlay button with app closed" height="400">&emsp;
-<img src="/app/screenshots/4.png" alt="overlay button moved with app closed" height="400">
+<img src="/app/screenshots/1.png" alt="Mainscreen" height="390">&emsp;
+<img src="/app/screenshots/2.png" alt="Mainscreen & overlay button" height="390">&emsp;
+<img src="/app/screenshots/3.png" alt="overlay button with app closed" height="390">&emsp;
+<img src="/app/screenshots/4.png" alt="overlay button moved with app closed" height="390">
 
 ## Required
 - 1 permission required : SYSTEM_ALERT_WINDOW (display over other apps)
