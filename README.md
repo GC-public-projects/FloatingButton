@@ -541,7 +541,7 @@ The Composable takes 2 params : the `Context` of the main activity in order to s
 
 # Making the button draggable
 There are 2 ways 2 make a composeView draggable :
-- `overlayView?.setOnTouchListener` : works only when the view is dragged from a non clickable component like a button
+- `overlayView?.setOnTouchListener` : works only when the view is dragged from a non clickable component unlike a button
 - `Modifier.pointerInput` : works fine with clickable components. all the gestures are captured and modify in real time the x and y params of the view. Whatever "Modifier.pointerInput" is setup on the button itself or anther parent composable, the view remains draggable by non or clickable components.
 
 
