@@ -10,16 +10,25 @@ This project is for Jetpack Compose initiated user
 The goal of this demo is to explain the way to show and hide a draggable composable (button) over all the apps. In order to gain in understanding, almost only mandatory components will be used.
 
 ## Overview
-- 1 : Content of the main screen
-- 2 : when app and ComposeView running
-- 3 : when app is closed and ComposeView running
-- 4 : when app is closed, ComposeView running and button has been moved
+- 1 : AlertDialog open overlay settings
+- 2 : Display over the apps settings - permission not allowed
+- 3 : Display over the apps settings - permission allowed
+
+- 4 : Content of the main screen
+- 5 : when app and ComposeView running
+- 6 : when app is closed and ComposeView running
+- 7 : when app is closed, ComposeView running and button has been moved
 
 
-<img src="/app/screenshots/1.png" alt="Mainscreen" height="390">&emsp;
-<img src="/app/screenshots/2.png" alt="Mainscreen & overlay button" height="390">&emsp;
-<img src="/app/screenshots/3.png" alt="overlay button with app closed" height="390">&emsp;
-<img src="/app/screenshots/4.png" alt="overlay button moved with app closed" height="390">
+<img src="/app/screenshots/1.png" alt="AlertDialog open overlay settings" height="390">&emsp;
+<img src="/app/screenshots/2.png" alt="Display over the apps settings - permission not allowed" height="390">&emsp;
+<img src="/app/screenshots/3.png" alt="Display over the apps settings - permission allowed" height="390">&emsp;
+
+
+<img src="/app/screenshots/4.png" alt="Mainscreen" height="390">&emsp;
+<img src="/app/screenshots/5.png" alt="Mainscreen & overlay button" height="390">&emsp;
+<img src="/app/screenshots/6.png" alt="overlay button with app closed" height="390">&emsp;
+<img src="/app/screenshots/7.png" alt="overlay button moved with app closed" height="390">
 
 ## Required
 - 1 permission required : SYSTEM_ALERT_WINDOW (display over other apps)
